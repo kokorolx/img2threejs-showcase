@@ -1,4 +1,9 @@
 import * as THREE from 'three';
+import {
+  createM9DopplerModel,
+  createM9DopplerLookDevLights,
+  makeM9DopplerBackground,
+} from './m9-doppler/createM9DopplerModel';
 import { createCrownChestModel } from './crown-chest/createCrownChestModel';
 import {
   createWarHaulerModel,
@@ -160,6 +165,40 @@ export const demos: DemoEntry[] = [
         frontWheel.rotation.z -= dWheel;
         rearWheel.rotation.z -= dWheel;
       };
+      return group;
+    },
+  },
+  {
+    id: 'm9-doppler',
+    title: 'M9 Bayonet | Doppler Phase 2',
+    subjectClass: 'object',
+    blurb:
+      'A CS2 M9 Bayonet rebuilt in code from a single broadside reference: the exact traced ' +
+      'silhouette (scalloped sawteeth, thumb-hole, wedge-ground blade) with a single continuous ' +
+      'flat-bar guard and a knurled worn-gunmetal grip. The Doppler Phase 2 finish (blue -> ' +
+      'violet -> cyan smoke) is applied as reference-crop textures projected onto the blade and ' +
+      'handle, over a code-generated studio environment. Live: a slow studio rock.',
+    referenceImage: `${BASE}references/m9-doppler.jpg`,
+    sourcePath: 'src/demos/m9-doppler/createM9DopplerModel.ts',
+    sourceUrl: `${REPO}/src/demos/m9-doppler/createM9DopplerModel.ts`,
+    generatedWith: 'img2threejs v1.3',
+    author: 'kokorolx',
+    authorUrl: 'https://github.com/kokorolx',
+    status: 'final',
+    cameraPosition: [0.4, 1.5, 5.2],
+    cameraTarget: [0, 0, 0],
+    cameraFov: 30,
+    exposure: 1.42,
+    // Own rig via installLights so the Viewer skips its default studio rig (the build was lit
+    // by this single 3-point rig + the RoomEnvironment IBL at exposure 1.42).
+    installLights: (scene) => {
+      scene.add(createM9DopplerLookDevLights());
+    },
+    build: (scene) => {
+      // Dark backdrop is owned by this demo's own module (runs after the Viewer, so it wins).
+      scene.background = makeM9DopplerBackground();
+      const group = createM9DopplerModel({ shadows: true });
+      scene.add(group);
       return group;
     },
   },
